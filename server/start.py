@@ -1,11 +1,3 @@
-from flask import Flask
-from flask import render_template
-from flask import request
-from flask import session
-
-from flask.ext.socketio import SocketIO, send, emit
-from udp_server import UDPServer
-
 import open_bci_v3 as bci
 import os
 import time
@@ -19,13 +11,9 @@ import sys
 #sock_server -> udp_ser
 #latest_string -> Temporary string to pass data
 
-HOST_IP = "0.0.0.0"
-app = Flask(__name__)
-app.config['SECRET_KEY'] = 'secret!'
 
 
 OUTPUT_OPTIONS = {"csv":False, "udp":False,"osc":True}
-
 STREAM_TIMEOUTLAPSE = 10 #In seconds
 
 def printData(sample):
