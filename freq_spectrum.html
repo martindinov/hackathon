@@ -1,0 +1,116 @@
+<html>
+<script src="fft.js" type="application/javascript"></script>
+<meta charset="utf-8">
+    <style>
+        .chart rect {
+        fill: steelblue;
+        stroke: white;
+    }
+    </style>
+
+    <div class="content">
+        <div id='thechart'> </div>
+    </div >
+
+
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script>
+
+    var count = 0;
+
+    var alpha_low = 0,
+        alpha_high = -4,
+        beta_low = 4,
+        beta_high = 8,
+        delta_low = 13,
+        delta_high = 25,
+        gamma_low = 25,
+        gamma_high = 40;
+
+    var data_x = Array.apply(null, Array(500)).map(function (_, i) {return i;});
+    var data_y = data_x.map(function(_, i) {return Math.sin(0.01*i)});
+    console.log(data_y)
+
+    var t = 1297110663,
+        v = 70,
+        rand = d3.random.normal(0, 100),
+        data = d3.range(5).map(next('purple'));
+
+    function next(color) {
+        return function() {
+            return {
+                time: ++t,
+                value: v = Math.abs(rand()),
+                color: color
+            };
+        }
+    }
+
+    var w = 5,
+        h = 100;
+
+    var x = d3.scale.linear()
+        .domain([0, 1])
+        .range([0, w]);
+
+    var y = d3.scale.linear()
+        .domain([0, 1])
+        .rangeRound([0, h]);
+
+var xAxis = d3.svg.axis()
+    .scale(x)
+    .orient("bottom")
+    .tickFormat(d3.time.format("%Y-%m"));
+
+
+
+    var chart = d3.select(".content")
+        .append("svg:svg")
+        .attr("class", "chart")
+        .attr("width", w * data_y.length - 1)
+        .attr("height", h);
+
+
+    chart.selectAll("rect")
+        .data(data_y)
+        .enter().append("svg:rect")
+        .attr("x", function(d, i) { return x(i) - .5; })
+        .attr("y", function(d) { return h - y(d) - .5; })
+        .style("fill", function(d) { return d.color; })
+        .attr("width", w)
+        .attr("height", function(d) { return y(d); })
+        .text(function(d) {
+            return d.value;
+        })
+
+    chart.append("svg:line")
+        .attr("x1", 0)
+        .attr("x2", w * data_y.length)
+        .attr("y1", h - .5)
+        .attr("y2", h - .5)
+        .attr("stroke", "#000");
+
+    //redraw();
+
+   // function redraw() {
+   //     chart.selectAll("rect")
+   //     .data(data)
+   //     .transition()
+   //     .duration(1000)
+   //     .attr("y", function(d) { return h - y(d.value) - .5; })
+   //     .attr("height", function(d) { return y(d.value); })
+   //     .style("fill", function(d) { return d.color; });
+   // }
+
+    //setInterval(function() {
+    //    data.shift();
+    //    data.push(next('blue')());
+    //    redraw();
+    //}, 1500);
+
+
+</script>
+
+
+</html>
+
