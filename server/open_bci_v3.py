@@ -24,8 +24,10 @@ import timeit
 import atexit
 import datetime as dt
 import sys, glob
-import csv
 
+#Martin-USBSERIAL = 'tty.usbserial-DN0095GD'
+#JustinUSBSERIAL = 'tty.usbserial-DN00961I'
+USBSERIAL = 'tty.usbserial-DN00961I'
 SAMPLE_RATE = 250.0  # Hz
 START_BYTE = bytes(0xA0)  # start of data packet
 END_BYTE = bytes(0xC0)  # end of data packet
@@ -70,7 +72,7 @@ class OpenBCIBoard(object):
     self.is_simulator = is_simulator
 
     if not self.is_simulator:
-      self.ser = serial.Serial("/dev/tty.usbserial-DN00946Y", baud) #timeout=5
+      self.ser = serial.Serial("/dev/"+USBSERIAL, baud) #timeout=5
       print("Serial established...")
       #Initialize 32-bit board, doesn't affect 8bit board
       self.ser.write('v');
@@ -177,7 +179,6 @@ class OpenBCIBoard(object):
     last_seen_time = dt.datetime.now()
     check_end_ctr = 0
     while self.streaming:
-      print "In streaming loop for real data"
       # read current sample
       sample = self._read_serial_binary()
       last_seen_time = dt.datetime.now()
@@ -197,13 +198,10 @@ class OpenBCIBoard(object):
           #  call(whole_sample)
           print whole_sample
       else:
-      	 print "still here..."
       	 new_data = ','.join([str(i) for i in sample.channel_data]) + '\n'
       	 print(new_data)
-      	 conn.send(new_data)
-        #for call in datacallback:
-        #  call(sample)
-      #Check if anything has gone wrong with the board, in which case send a callback
+      	 conn.write_message(new_data)
+      	 #conn.send(new_data)
 
       #
       #if(lapse > 0 and (dt.datetime.now() - last_seen_time).seconds > lapse):
@@ -273,12 +271,13 @@ class OpenBCIBoard(object):
 
   """
 
-  Adds a filter at 60hz to cancel out ambient electrical noise.
+  Adds a filter at (US) 60hz to cancel out ambient electrical noise.
 
   """
   def enable_filters(self):
-    self.ser.write('f')
-    self.filtering_data = True;
+  	print "Enable 60Hz filter"
+   	self.ser.write('f')
+   	self.filtering_data = True;
 
   def disable_filters(self):
     self.ser.write('g')
