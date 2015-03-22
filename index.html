@@ -1,4 +1,4 @@
-<html>
+<html style="background-color: rgba(54, 56, 49, 0.5)">
     <meta charset="utf-8">
     <style>
         .chart rect {
@@ -9,6 +9,9 @@
         float: left;
         margin: 20px;
     }
+    .square_title span{
+        font-size: 18pt;
+    }
     .square {
         width: 20px;
         height: 20px;
@@ -16,33 +19,37 @@
         border-style: solid;
         border-color: rgba(0,0,0,.2);
     }
+    body{
+        margin-left: 100px;
+    }
     </style>
+    <body>
+            <div class="square_title"> 
+                <span> delta </span>
+                <div class="square" style="background-color:rgb(0, 0, 255);"> </div> 
+            </div>
+            <div class="square_title"> 
+                <span> theta </span>
+                <div class="square" style="background-color:rgb(128, 0, 128);"> </div> 
+            </div>
+            <div class="square_title"> 
+                <span> alpha </span>
+                <div class="square" style="background-color:rgb(255, 255, 0);"> </div> 
+            </div>
+            <div class="square_title"> 
+                <span> beta </span>
+                <div class="square" style="background-color:rgb(255, 165, 0);"> </div> 
+            </div>
+            <div class="square_title"> 
+                <span> gamma </span>
+                <div class="square" style="background-color:rgb(0, 128, 0);"> </div> 
+            </div>
 
-        <div class="square_title"> 
-            <span> delta </span>
-            <div class="square" style="background-color:rgb(0, 0, 255);"> </div> 
-        </div>
-        <div class="square_title"> 
-            <span> theta </span>
-            <div class="square" style="background-color:rgb(128, 0, 128);"> </div> 
-        </div>
-        <div class="square_title"> 
-            <span> alpha </span>
-            <div class="square" style="background-color:rgb(255, 255, 0);"> </div> 
-        </div>
-        <div class="square_title"> 
-            <span> beta </span>
-            <div class="square" style="background-color:rgb(255, 165, 0);"> </div> 
-        </div>
-        <div class="square_title"> 
-            <span> gamma </span>
-            <div class="square" style="background-color:rgb(0, 128, 0);"> </div> 
-        </div>
-
-    <div style="clear:both;" class="content">
-        <div id='thechart'> </div>
-    </div >
-
+        <div  style="clear:both;" class="content">
+            <div style="float: left; margin-top: 20px; margin-left: 20px;" id='thechart'> </div>
+            <div style="float: left; margin-top: 20px; margin-left: 20px;" id='thechart2'> </div>
+        </div >
+    </body>
 
 
     <script src="http://d3js.org/d3.v3.min.js"></script>
@@ -75,84 +82,90 @@
 
     var x_axis = '10*log(μV**2 / Hz)';
 
-    var t = 1297110663,
-        v = 70,
-        rand = d3.random.normal(0, 100),
-        data = d3.range(5).map(next);
 
-    function next() {
-        return {
-            time: ++t,
-            value: v = Math.abs(rand()),
-        };
-    
-    }
+    function makeChart(selector){
+            var t = 1297110663,
+                v = 70,
+                rand = d3.random.normal(0, 100),
+                data = d3.range(5).map(next);
 
-    var w = 50,
-        h = 200;
+            function next() {
+                return {
+                    time: ++t,
+                    value: v = Math.abs(rand()),
+                };
+            
+            }
 
-    var x = d3.scale.linear()
-        .domain([0, 1])
-        .range([0, w]);
+            var w = 50,
+                h = 200;
 
-    var y = d3.scale.linear()
-        .domain([0, 100])
-        .rangeRound([0, h]);
+            var x = d3.scale.linear()
+                .domain([0, 1])
+                .range([0, w]);
 
-var xAxis = d3.svg.axis()
-    .scale(x)
-    .orient("bottom")
-    .tickFormat(d3.time.format("%Y-%m"));
+            var y = d3.scale.linear()
+                .domain([0, 100])
+                .rangeRound([0, h]);
 
-
-
-    var chart = d3.select(".content")
-        .append("svg:svg")
-        .attr("class", "chart")
-        .attr("width", w * data.length - 1)
-        .attr("height", h);
+        var xAxis = d3.svg.axis()
+            .scale(x)
+            .orient("bottom")
+            .tickFormat(d3.time.format("%Y-%m"));
 
 
-    chart.selectAll("rect")
-        .data(data)
-        .enter().append("svg:rect")
-        .attr("x", function(d, i) { return x(i) - .5; })
-        .attr("y", function(d) { return h - y(d.value) - .5; })
-        .style("fill", function(d, i) { 
-            return colors[i];
-        })
-        .attr("width", w)
-        .attr("height", function(d) { return y(d.value); })
-        .text(function(d) {
-            return d.value;
-        })
 
-    chart.append("svg:line")
-        .attr("x1", 0)
-        .attr("x2", w * data.length)
-        .attr("y1", h - .5)
-        .attr("y2", h - .5)
-        .attr("stroke", "#000");
+            var chart = d3.select(selector)
+                .append("svg:svg")
+                .attr("class", "chart")
+                .attr("width", w * data.length - 1)
+                .attr("height", h);
 
-    redraw();
 
-    function redraw() {
-        chart.selectAll("rect")
-        .data(data)
-        .transition()
-        .duration(1000)
-        .attr("y", function(d) { return h - y(d.value) - .5; })
-        .attr("height", function(d) { return y(d.value); })
-        .style("fill", function(d, i) { 
-            return colors[i];
-        });
-    }
+            chart.selectAll("rect")
+                .data(data)
+                .enter().append("svg:rect")
+                .attr("x", function(d, i) { return x(i) - .5; })
+                .attr("y", function(d) { return h - y(d.value) - .5; })
+                .style("fill", function(d, i) { 
+                    return colors[i];
+                })
+                .attr("width", w)
+                .attr("height", function(d) { return y(d.value); })
+                .text(function(d) {
+                    return d.value;
+                })
 
-    setInterval(function() {
-        data.shift();
-        data.push(next());
-        redraw();
-    }, 500);
+            chart.append("svg:line")
+                .attr("x1", 0)
+                .attr("x2", w * data.length)
+                .attr("y1", h - .5)
+                .attr("y2", h - .5)
+                .attr("stroke", "#000");
+
+            redraw();
+
+            function redraw() {
+                chart.selectAll("rect")
+                .data(data)
+                .transition()
+                .duration(1000)
+                .attr("y", function(d) { return h - y(d.value) - .5; })
+                .attr("height", function(d) { return y(d.value); })
+                .style("fill", function(d, i) { 
+                    return colors[i];
+                });
+            }
+
+            setInterval(function() {
+                data.shift();
+                data.push(next());
+                redraw();
+            }, 500);
+    };
+
+    makeChart('#thechart');
+    makeChart('#thechart2');
 
 
 </script>
