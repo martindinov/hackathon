@@ -57,6 +57,7 @@
     <script>
 
     var count = 0;
+    var ch1 = [];
 
     colors = {
         0: "blue",
@@ -90,10 +91,18 @@
                 rand = d3.random.normal(0, 100),
                 data = d3.range(5).map(next);
 
+
+    
             function next() {
+    if(ch1.length == 0) {
+    v = 0;
+} else {
+    v = ch1[ch1.length-1];
+    console.log(ch1);
+}
                 return {
                     time: ++t,
-                    value: v = Math.abs(rand()),
+                    value: v
                 };
             
             }
@@ -106,7 +115,7 @@
                 .range([0, w]);
 
             var y = d3.scale.linear()
-                .domain([0, 100])
+                .domain([-9500 -7000])
                 .rangeRound([0, h]);
 
         var xAxis = d3.svg.axis()
@@ -151,7 +160,11 @@
                 .data(data)
                 .transition()
                 .duration(1000)
-                .attr("y", function(d) { return h - y(d.value) - .5; })
+                .attr("y", function(d) {
+    console.log(d.value);
+    console.log(y(d.value));
+    return h - y(d.value) - .5; 
+})
                 .attr("height", function(d) { return y(d.value); })
                 .style("fill", function(d, i) { 
                     return colors[i];
@@ -159,6 +172,8 @@
             }
 
             setInterval(function() {
+    console.log("here")
+return
                 data.shift();
                 data.push(next());
                 redraw();
@@ -178,6 +193,9 @@
             console.log("dsadsa");
             var received_msg = evt.data;
             console.log(received_msg);
+    numbers = received_msg.split(",");
+    ch1.push(numbers[0]);
+    console.log(ch1[ch1.length-1]);
         };
         ws.onclose = function() { 
         };
