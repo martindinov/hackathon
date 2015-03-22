@@ -63,7 +63,7 @@
             </div>
 
         <div  style="clear:both;" class="content">
-            <div style="float: left; margin-top: 20px; margin-left: 20px; clear: left;" id='thechart'></div>
+            <div style="float: left; margin-top: 2px; margin-left: 20px; clear: left;" id='thechart'></div>
             <div style="float: left; margin-top: 20px; margin-left: 20px; clear: left;" id='thechart2'></div>
             
         </div >
@@ -117,14 +117,14 @@
     var chart_a=null, chart_b=null;
 
     var data_a = [], data_b = [];
-    var h=200, w=100, v=70;
+    var h=600, w=100, v=70;
 
             var x = d3.scale.linear()
                 .domain([0, 1])
                 .range([0, w]);
 
             var y = d3.scale.linear()
-                .domain([-30000, 30000])
+                .domain([-19000, 19000])
                 .rangeRound([0, h]);
 
             function redraw(data, chart) {
