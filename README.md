@@ -1,7 +1,7 @@
 # Hack the brain hackathon 2015
 
 Team : Alain, Justin, Harry, Andrew, David and Martin   
-Goal : Create a sentralized social platfoem for visualizing different people's brainwaves for games and other interactions   
+Goal : Create a centralized social platfoem for visualizing different people's brainwaves for games and other interactions   
 # Hackathon TODOs
 
 ## Pre-hackathon:
