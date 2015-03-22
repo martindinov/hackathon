@@ -55,6 +55,18 @@
 
     <script src="http://d3js.org/d3.v3.min.js"></script>
     <script>
+    var t = 1297110663;
+    function next() {
+        var v = 0;
+        if(ch1.length != 0) {
+            v = ch1[ch1.length-1];
+        }
+        console.log(v);
+        return {
+            time: ++t,
+            value: v
+        };
+    }
 
     var count = 0;
     var ch1 = [];
@@ -83,40 +95,40 @@
         gamma_high = 40;
 
     var x_axis = '10*log(μV**2 / Hz)';
+    var chart_a=null, chart_b=null;
 
-
-    function makeChart(selector){
-            var t = 1297110663,
-                v = 70,
-                rand = d3.random.normal(0, 100),
-                data = d3.range(5).map(next);
-
-
-    
-            function next() {
-    if(ch1.length == 0) {
-    v = 0;
-} else {
-    v = ch1[ch1.length-1];
-    console.log(ch1);
-}
-                return {
-                    time: ++t,
-                    value: v
-                };
-            
-            }
-
-            var w = 50,
-                h = 200;
+    var data_a = [], data_b = [];
+    var h=200, w=50, v=70;
 
             var x = d3.scale.linear()
                 .domain([0, 1])
                 .range([0, w]);
 
             var y = d3.scale.linear()
-                .domain([-9500 -7000])
+                .domain([-30000, 30000])
                 .rangeRound([0, h]);
+
+            function redraw(data, chart) {
+                chart.selectAll("rect")
+                .data(data)
+                .transition()
+                .duration(1000)
+                .attr("y", function(d) {
+                        console.log(d.value, y(d.value));
+                        return h - y(d.value) - .5; 
+                    })
+                .attr("height", function(d) { return y(d.value); })
+                .style("fill", function(d, i) { 
+                    return colors[i];
+                });
+            }
+
+    function makeChart(selector, data) {
+
+                var 
+                rand = d3.random.normal(0, 100),
+                data = d3.range(5).map(next);
+
 
         var xAxis = d3.svg.axis()
             .scale(x)
@@ -153,49 +165,42 @@
                 .attr("y2", h - .5)
                 .attr("stroke", "#000");
 
-            redraw();
+            redraw(data, chart);
 
-            function redraw() {
-                chart.selectAll("rect")
-                .data(data)
-                .transition()
-                .duration(1000)
-                .attr("y", function(d) {
-    console.log(d.value);
-    console.log(y(d.value));
-    return h - y(d.value) - .5; 
-})
-                .attr("height", function(d) { return y(d.value); })
-                .style("fill", function(d, i) { 
-                    return colors[i];
-                });
-            }
+            // setInterval(function() {
+            //     data.shift();
+            //     data.push(next());
+            //     redraw();
+            // }, 500);
 
-            setInterval(function() {
-    console.log("here")
-return
-                data.shift();
-                data.push(next());
-                redraw();
-            }, 500);
+        return chart;
     };
 
-    makeChart('#thechart');
-    makeChart('#thechart2');
+    chart_a = makeChart('#thechart', data_a);
+    chart_b = makeChart('#thechart2', data_b);
 
+    var count = 20;
     (function () {
     if ("WebSocket" in window) {
         var ws = new WebSocket("ws://10.2.30.212:51244/ws?Id=123456789");
         ws.onopen = function() {
             ws.send("Opened");
         };
-        ws.onmessage = function (evt) { 
-            console.log("dsadsa");
+        ws.onmessage = function (evt) {
             var received_msg = evt.data;
-            console.log(received_msg);
-    numbers = received_msg.split(",");
-    ch1.push(numbers[0]);
-    console.log(ch1[ch1.length-1]);
+
+            numbers = received_msg.split(",");
+            ch1.push(parseInt(numbers[6]));
+            
+            if (count % 20 == 0)  {
+                var n = next();
+                data_a.shift();
+                data_a.push(n);
+                redraw(data_a, chart_a);   
+            } else{
+                console.log("");
+            }
+            count++;
         };
         ws.onclose = function() { 
         };
