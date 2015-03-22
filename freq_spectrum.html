@@ -27,8 +27,17 @@
         gamma_low = 25,
         gamma_high = 40;
 
-    var data_x = Array.apply(null, Array(500)).map(function (_, i) {return i;});
-    var data_y = data_x.map(function(_, i) {return Math.sin(0.01*i)});
+    var data_x = Array.apply(null, Array(5000)).map(function (_, i) {return i;});
+    var data_re = data_x.map(function(_, i) {return (Math.sin(0.001*i))});
+    var data_im = data_x.map(function(_, i) {return 0});
+    transform(data_re, data_im)
+    
+    // Find absolute values...
+  data_y = []
+  for (i=0; i<data_x.length; i++) {
+    data_y[i] = Math.sqrt(Math.pow(data_re[i], 2) + Math.pow(data_im[i], 2))
+  }
+    
     console.log(data_y)
 
     var t = 1297110663,
@@ -50,7 +59,7 @@
         h = 100;
 
     var x = d3.scale.linear()
-        .domain([0, 1])
+        .domain([0, 10])
         .range([0, w]);
 
     var y = d3.scale.linear()
