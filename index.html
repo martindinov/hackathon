@@ -25,24 +25,41 @@
     </style>
     <body>
             <div class="square_title"> 
-                <span> delta </span>
+                <span> chan 1 </span>
                 <div class="square" style="background-color:rgb(0, 0, 255);"> </div> 
             </div>
             <div class="square_title"> 
-                <span> theta </span>
+                <span> chan 2 </span>
                 <div class="square" style="background-color:rgb(128, 0, 128);"> </div> 
             </div>
             <div class="square_title"> 
-                <span> alpha </span>
+                <span> chan 3 </span>
                 <div class="square" style="background-color:rgb(255, 255, 0);"> </div> 
             </div>
             <div class="square_title"> 
-                <span> beta </span>
+                <span> chan 4 </span>
                 <div class="square" style="background-color:rgb(255, 165, 0);"> </div> 
             </div>
             <div class="square_title"> 
-                <span> gamma </span>
+                <span> chan 5 </span>
                 <div class="square" style="background-color:rgb(0, 128, 0);"> </div> 
+            </div>
+
+
+            <div class="square_title"> 
+                <span> chan 6 </span>
+                <div class="square" style="background-color:rgb(255, 0, 0);"> </div> 
+            </div>
+
+            <div class="square_title"> 
+                <span> chan 7 </span>
+                <div class="square" style="background-color: rgb(255, 192, 203);"> </div> 
+            </div>
+
+
+            <div class="square_title"> 
+                <span> chan 8 </span>
+                <div class="square" style="background-color: rgb(128, 128, 128);"> </div> 
             </div>
 
         <div  style="clear:both;" class="content">
@@ -61,7 +78,6 @@
         if(ch1.length != 0) {
             v = ch1[ch1.length-1];
         }
-        console.log(v);
         return {
             time: ++t,
             value: v
@@ -70,13 +86,16 @@
 
     var count = 0;
     var ch1 = [];
-
     colors = {
         0: "blue",
         1: "purple",
         2: "yellow",
         3: "orange",
-        4: "green"
+        4: "green",
+        5: "red",
+        6: "pink",
+        7: "gray",
+        8: "black"
     }
 
     var delta_low = 0,
@@ -98,7 +117,7 @@
     var chart_a=null, chart_b=null;
 
     var data_a = [], data_b = [];
-    var h=200, w=50, v=70;
+    var h=200, w=100, v=70;
 
             var x = d3.scale.linear()
                 .domain([0, 1])
@@ -109,15 +128,18 @@
                 .rangeRound([0, h]);
 
             function redraw(data, chart) {
+
                 chart.selectAll("rect")
                 .data(data)
                 .transition()
                 .duration(1000)
                 .attr("y", function(d) {
-                        console.log(d.value, y(d.value));
                         return h - y(d.value) - .5; 
                     })
-                .attr("height", function(d) { return y(d.value); })
+                .attr("height", function(d) { 
+                
+                    return Math.abs(y(d.value)); 
+                })
                 .style("fill", function(d, i) { 
                     return colors[i];
                 });
@@ -127,7 +149,7 @@
 
                 var 
                 rand = d3.random.normal(0, 100),
-                data = d3.range(5).map(next);
+                data = d3.range(8).map(next);
 
 
         var xAxis = d3.svg.axis()
@@ -141,7 +163,7 @@
                 .append("svg:svg")
                 .attr("class", "chart")
                 .attr("width", w * data.length - 1)
-                .attr("height", h);
+                .attr("height", Math.abs(h));
 
 
             chart.selectAll("rect")
@@ -153,7 +175,7 @@
                     return colors[i];
                 })
                 .attr("width", w)
-                .attr("height", function(d) { return y(d.value); })
+                .attr("height", function(d) { return Math.abs(y(d.value)); })
                 .text(function(d) {
                     return d.value;
                 })
@@ -179,7 +201,7 @@
     chart_a = makeChart('#thechart', data_a);
     chart_b = makeChart('#thechart2', data_b);
 
-    var count = 20;
+    var count = 10;
     (function () {
     if ("WebSocket" in window) {
         var ws = new WebSocket("ws://10.2.30.212:51244/ws?Id=123456789");
@@ -188,17 +210,19 @@
         };
         ws.onmessage = function (evt) {
             var received_msg = evt.data;
+            if (count % 10 == 0)  {
+                data_a = [];
+                numbers = received_msg.split(",");
+                for(kk=0; kk<8; kk++){
+                    var n = {
+                        time: ++t,
+                        value: parseInt(numbers[kk])
+                    }
+                    data_a.push(n);    
+                }
+                redraw(data_a, chart_a);
 
-            numbers = received_msg.split(",");
-            ch1.push(parseInt(numbers[6]));
-            
-            if (count % 20 == 0)  {
-                var n = next();
-                data_a.shift();
-                data_a.push(n);
-                redraw(data_a, chart_a);   
             } else{
-                console.log("");
             }
             count++;
         };
