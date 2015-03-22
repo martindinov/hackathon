@@ -56,6 +56,21 @@
     <script src="http://d3js.org/d3.v3.min.js"></script>
     <script>
 
+    var ws = new WebSocket("ws://http://10.2.30.212:51244/ws?Id=123456789");
+        ws.onopen = function() {
+            ws.send("Opened");
+        };
+        ws.onmessage = function (evt) { 
+            var received_msg = evt.data;
+            console.log(received_msg);
+        };
+        ws.onclose = function() { 
+            console.log ( "Connection is closed...");
+        };
+    } else {
+        alert("WebSocket NOT supported by your Browser!");
+    }
+
     var count = 0;
 
     colors = {
